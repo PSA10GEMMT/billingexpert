@@ -586,7 +586,11 @@ footer p {
     }
 
     .hero-buttons {
-        justify-content: center;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        max-width: 360px;
+        margin: 0 auto;
     }
 
     .hero-image img {
@@ -621,5 +625,15 @@ footer p {
 
     .about, .skills, .contact {
         padding: 60px 0;
+    }
+}
+
+/* Mobile button grid */
+@media screen and (max-width: 768px) {
+    .hero-buttons .btn {
+        text-align: center;
+        padding: 14px 10px;
+        font-size: 0.72rem;
+        width: 100%;
     }
 }
