@@ -508,6 +508,15 @@ footer p {
 
 /* ===== RESPONSIVE ===== */
 @media screen and (max-width: 1024px) {
+    .nav-menu {
+        gap: 20px;
+    }
+
+    .nav-link {
+        font-size: 0.78rem;
+        letter-spacing: 1px;
+    }
+
     .hero {
         gap: 50px;
         padding: 120px 30px 60px;
