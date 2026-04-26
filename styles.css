@@ -74,6 +74,7 @@ a:hover {
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     transition: all 0.4s ease;
+    overflow: visible;
 }
 
 .nav-container {
@@ -524,8 +525,9 @@ footer p {
 
 @media screen and (max-width: 768px) {
     .nav-container {
-        padding: 0 16px;
+        padding: 0 24px;
         height: 60px;
+        overflow: visible;
     }
 
     .nav-logo a {
