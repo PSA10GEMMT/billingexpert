@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jace Sullivan - References</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .references-page {
+            padding: 120px 0 80px;
+            background-color: #faf9f7;
+            min-height: 100vh;
+        }
+        .references-page h1 {
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 2.5rem;
+            font-family: 'Playfair Display', Georgia, serif;
+            color: #1a1a2e;
+        }
+        .references-intro {
+            text-align: center;
+            color: #7a6548;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-style: italic;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+        .references-divider {
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(90deg, #2c3e6b, #7a6548);
+            margin: 0 auto 40px;
+        }
+
+        /* Filter Buttons */
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 24px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #4a4a4a;
+        }
+        .filter-btn:hover {
+            border-color: #7a6548;
+            color: #7a6548;
+        }
+        .filter-btn.active {
+            background: #1a1a2e;
+            color: white;
+            border-color: #1a1a2e;
+        }
+
+        /* Cards Grid */
+        .references-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 30px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Card Wrapper */
+        .ref-card-wrapper {
+            perspective: 1000px;
+            height: 320px;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .ref-card-wrapper.hidden {
+            display: none;
+        }
+
+        /* Flip Card */
+        .ref-card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s ease;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        .ref-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* Card Faces */
+        .ref-front, .ref-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+
+        /* Front */
+        .ref-front {
+            background: white;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+        .ref-category {
+            display: inline-block;
+            padding: 3px 14px;
+            border-radius: 3px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 16px;
+            align-self: flex-start;
+        }
+        .ref-category.colleague {
+            background: #2c3e6b15;
+            color: #2c3e6b;
+        }
+        .ref-category.partner {
+            background: #7a654815;
+            color: #7a6548;
+        }
+        .ref-category.client {
+            background: #6b8f7115;
+            color: #6b8f71;
+        }
+        .ref-name {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.3rem;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+        }
+        .ref-title {
+            font-size: 0.88rem;
+            color: #7a6548;
+            font-style: italic;
+            font-family: 'Playfair Display', Georgia, serif;
+            margin-bottom: 16px;
+        }
+        .ref-excerpt {
+            font-size: 0.92rem;
+            color: #4a4a4a;
+            line-height: 1.7;
+            flex: 1;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 5;
+            -webkit-box-orient: vertical;
+        }
+        .ref-front-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(0,0,0,0.06);
+        }
+        .ref-flip-hint {
+            font-size: 0.78rem;
+            color: #6a6a6a;
+            letter-spacing: 0.3px;
+            font-family: 'Inter', sans-serif;
+        }
+        .ref-flip-hint i {
+            color: #7a6548;
+            margin-right: 4px;
+        }
+        .ref-expand-btn {
+            padding: 6px 16px;
+            background: #1a1a2e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .ref-expand-btn:hover {
+            background: #2c3e6b;
+            transform: translateY(-1px);
+        }
+
+        /* Back */
+        .ref-back {
+            background: #1a1a2e;
+            transform: rotateY(180deg);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .ref-back-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #7a6548;
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 20px;
+        }
+        .ref-back-name {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.4rem;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .ref-contact-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .ref-contact-row i {
+            color: #7a6548;
+            width: 18px;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        .ref-contact-row span {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.92rem;
+        }
+        .ref-contact-row a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+        .ref-contact-row a:hover {
+            color: #7a6548;
+            border-color: #7a6548;
+        }
+        .ref-relationship {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .ref-relationship-label {
+            font-size: 0.72rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 4px;
+        }
+        .ref-relationship-value {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.92rem;
+        }
+        .ref-back-flip-hint {
+            position: absolute;
+            bottom: 20px;
+            right: 24px;
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.3);
+            font-family: 'Inter', sans-serif;
+        }
+        .ref-back-flip-hint i {
+            color: #7a6548;
+            margin-right: 4px;
+        }
+
+        /* Full Screen Modal */
+        .ref-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            animation: fadeIn 0.3s ease;
+        }
+        .ref-modal-overlay.active {
+            display: flex;
+        }
+        .ref-modal {
+            background: white;
+            border-radius: 8px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 50px;
+            position: relative;
+            animation: modalSlideIn 0.4s ease;
+        }
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .ref-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            width: 36px;
+            height: 36px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: #4a4a4a;
+            transition: all 0.3s ease;
+        }
+        .ref-modal-close:hover {
+            background: #1a1a2e;
+            color: white;
+            border-color: #1a1a2e;
+        }
+        .ref-modal-category {
+            display: inline-block;
+            padding: 3px 14px;
+            border-radius: 3px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 16px;
+        }
+        .ref-modal-name {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.8rem;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+        }
+        .ref-modal-title {
+            font-size: 0.95rem;
+            color: #7a6548;
+            font-style: italic;
+            font-family: 'Playfair Display', Georgia, serif;
+            margin-bottom: 30px;
+        }
+        .ref-modal-text {
+            font-size: 1.05rem;
+            color: #4a4a4a;
+            line-height: 1.9;
+            margin-bottom: 30px;
+        }
+        .ref-modal-divider {
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, #2c3e6b, #7a6548);
+            margin-bottom: 20px;
+        }
+        .ref-modal-contact {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .ref-modal-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.92rem;
+            color: #4a4a4a;
+        }
+        .ref-modal-contact-item i {
+            color: #2c3e6b;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media screen and (max-width: 768px) {
+            .references-page {
+                padding: 100px 0 60px;
+            }
+            .references-page h1 {
+                font-size: 1.8rem;
+            }
+            .references-grid {
+                grid-template-columns: 1fr;
+            }
+            .ref-modal {
+                padding: 30px;
+                margin: 20px;
+            }
+            .ref-modal-name {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <a href="index.html">Jace Sullivan</a>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="timeline.html" class="nav-link">Timeline</a></li>
+                    <li class="nav-item"><a href="references.html" class="nav-link">References</a></li>
+                </ul>
+                <div class="nav-toggle" id="mobile-menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="references-page">
+            <div class="container">
+                <h1>References</h1>
+                <p class="references-intro">Words from the people I've worked with</p>
+                <div class="references-divider"></div>
+
+                <div class="filter-bar">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="colleague">Colleagues</button>
+                    <button class="filter-btn" data-filter="partner">Partners</button>
+                    <button class="filter-btn" data-filter="client">Clients</button>
+                </div>
+
+                <div class="references-grid">
+
+
+                    <!-- Ross Binkley - Partner -->
+                    <div class="ref-card-wrapper" data-category="partner">
+                        <div class="ref-card">
+                            <div class="ref-front">
+                                <span class="ref-category partner">Partner</span>
+                                <h3 class="ref-name">Ross Binkley</h3>
+                                <p class="ref-title">Chief Solutions Officer, GoTransverse</p>
+                                <p class="ref-excerpt">I am pleased to recommend Jace Sullivan, whom I have had the opportunity to work with closely over several years. During that time, I have seen Jace grow into a highly capable and dependable professional with deep expertise in billing and monetization. Jace brings a strong combination of technical knowledge and problem-solving ability. His expertise while working with GT is at a level where he can confidently guide others, support new team members, and lead through complex implementations.</p>
+                                <div class="ref-front-actions">
+                                    <span class="ref-flip-hint"><i class="fas fa-sync-alt"></i> Click to flip</span>
+                                    <button class="ref-expand-btn" onclick="event.stopPropagation(); openModal(this);">Read Full</button>
+                                </div>
+                            </div>
+                            <div class="ref-back">
+                                <span class="ref-back-label">Contact Information</span>
+                                <h3 class="ref-back-name">Ross Binkley</h3>
+                                <div class="ref-contact-row">
+                                    <i class="fas fa-envelope"></i>
+                                    <a href="mailto:rbinkley@gotransverse.com">rbinkley@gotransverse.com</a>
+                                </div>
+                                <div class="ref-contact-row">
+                                    <i class="fas fa-phone"></i>
+                                    <span>(512) 415-3189</span>
+                                </div>
+                                <div class="ref-relationship">
+                                    <div class="ref-relationship-label">Relationship</div>
+                                    <div class="ref-relationship-value">Partner — Chief Solutions Officer at GoTransverse</div>
+                                </div>
+                                <span class="ref-back-flip-hint"><i class="fas fa-sync-alt"></i> Click to flip back</span>
+                            </div>
+                        </div>
+                        <div class="ref-full-text" style="display:none;">I am pleased to recommend Jace Sullivan, whom I have had the opportunity to work with closely over several years. During that time, I have seen Jace grow into a highly capable and dependable professional with deep expertise in billing and monetization.<br><br>Jace brings a strong combination of technical knowledge and problem-solving ability. His expertise while working with GT is at a level where he can confidently guide others, support new team members, and lead through complex implementations. He also has a strong foundation in mathematics and billing concepts, making him particularly effective in solving challenging pricing and usage-based scenarios.<br><br>One of Jace's most notable strengths is his work ethic. He consistently demonstrates ownership, reliability, and a commitment to delivering high-quality outcomes. He is someone I trust to take on difficult problems and see them through to completion. His broader experience as a solution architect in quote-to-cash processes and complex usage rating further reinforces his ability to operate effectively in demanding environments.<br><br>As Jace has progressed into a Solution Architect role, he has demonstrated strong leadership in guiding teams and delivering complex billing and monetization solutions. In his current capacity supporting a leading role at Cognizant, he drives architectural direction, mentors team members, and ensures successful execution across initiatives. He communicates solutions clearly and effectively, aligning technical approaches with business objectives. His experience leading engagements and navigating complex environments positions him well to continue expanding his impact at an enterprise level.<br><br>I strongly recommend Jace for roles that require analytical thinking, ownership, and expertise in billing and monetization.<br><br><em>— Ross Binkley, Chief Solutions Officer, GoTransverse</em></div>
+                    </div>
+
+
+
+                    <!-- Alex Ekblad - Colleague -->
+                    <div class="ref-card-wrapper" data-category="colleague">
+                        <div class="ref-card">
+                            <div class="ref-front">
+                                <span class="ref-category colleague">Colleague</span>
+                                <h3 class="ref-name">Alex Ekblad</h3>
+                                <p class="ref-title">Colleague, ATG/Cognizant</p>
+                                <p class="ref-excerpt">Jace is adaptive to difficult scenarios and consistently finds a way to move things forward. He is thorough and precise with his development work, and he is highly communicative to ensure teams are always on the same page.</p>
+                                <div class="ref-front-actions">
+                                    <span class="ref-flip-hint"><i class="fas fa-sync-alt"></i> Click to flip</span>
+                                    <button class="ref-expand-btn" onclick="event.stopPropagation(); openModal(this);">Read Full</button>
+                                </div>
+                            </div>
+                            <div class="ref-back">
+                                <span class="ref-back-label">Contact Information</span>
+                                <h3 class="ref-back-name">Alex Ekblad</h3>
+                                <div class="ref-contact-row">
+                                    <i class="fas fa-envelope"></i>
+                                    <a href="mailto:alexekblad1@gmail.com">alexekblad1@gmail.com</a>
+                                </div>
+                                <div class="ref-contact-row">
+                                    <i class="fas fa-phone"></i>
+                                    <span>(715) 563-1393</span>
+                                </div>
+                                <div class="ref-relationship">
+                                    <div class="ref-relationship-label">Relationship</div>
+                                    <div class="ref-relationship-value">Colleague at ATG/Cognizant</div>
+                                </div>
+                                <span class="ref-back-flip-hint"><i class="fas fa-sync-alt"></i> Click to flip back</span>
+                            </div>
+                        </div>
+                        <div class="ref-full-text" style="display:none;">Jace is adaptive to difficult scenarios and consistently finds a way to move things forward. He is thorough and precise with his development work, delivering high-quality results that the team can depend on. He is highly communicative, always making sure that everyone on the team is aligned and on the same page.<br><br><em>— Alex Ekblad, ATG/Cognizant</em></div>
+                    </div>
+
+
+                    <!-- Jennifer Kuehn - Colleague -->
+                    <div class="ref-card-wrapper" data-category="colleague">
+                        <div class="ref-card">
+                            <div class="ref-front">
+                                <span class="ref-category colleague">Colleague</span>
+                                <h3 class="ref-name">Jennifer Kuehn, CPA, CFE</h3>
+                                <p class="ref-title">Colleague, ATG/Cognizant</p>
+                                <p class="ref-excerpt">Jace and I worked together for eight years, during which he consistently demonstrated deep expertise, reliability, and professionalism. Early in my tenure, Jace patiently trained me on complex billing software, ensuring I had the foundation needed to succeed. Over the years, we partnered on numerous initiatives that delivered significant impact for our customers.</p>
+                                <div class="ref-front-actions">
+                                    <span class="ref-flip-hint"><i class="fas fa-sync-alt"></i> Click to flip</span>
+                                    <button class="ref-expand-btn" onclick="event.stopPropagation(); openModal(this);">Read Full</button>
+                                </div>
+                            </div>
+                            <div class="ref-back">
+                                <span class="ref-back-label">Contact Information</span>
+                                <h3 class="ref-back-name">Jennifer Kuehn, CPA, CFE</h3>
+                                <div class="ref-contact-row">
+                                    <i class="fas fa-envelope"></i>
+                                    <a href="mailto:Jenniferlelliott@yahoo.com">Jenniferlelliott@yahoo.com</a>
+                                </div>
+                                <div class="ref-contact-row">
+                                    <i class="fas fa-phone"></i>
+                                    <span>(406) 529-3716</span>
+                                </div>
+                                <div class="ref-relationship">
+                                    <div class="ref-relationship-label">Relationship</div>
+                                    <div class="ref-relationship-value">Colleague at ATG/Cognizant, 8 years</div>
+                                </div>
+                                <span class="ref-back-flip-hint"><i class="fas fa-sync-alt"></i> Click to flip back</span>
+                            </div>
+                        </div>
+                        <div class="ref-full-text" style="display:none;">Jace and I worked together for eight years, during which he consistently demonstrated deep expertise, reliability, and professionalism. Early in my tenure, Jace patiently trained me on complex billing software, ensuring I had the foundation needed to succeed. Over the years, we partnered on numerous initiatives that delivered significant impact for our customers.<br><br>Jace has supported dozens of clients with exceptional results. One recent client was so impressed with his skill as a billing specialist\u2014and the clarity and dependability of his work\u2014that they requested he stay on and expand his role after completing an initial project. His communication is always professional, and his feedback on solutions and designs is grounded in best practices and thoughtful analysis. Jace is a trusted expert and a strong collaborator, and I recommend him without hesitation.<br><br><em>\u2014 Jennifer Kuehn, CPA, CFE</em></div>
+                    </div>
+
+
+                    <!-- Nate Nichols - Client -->
+                    <div class="ref-card-wrapper" data-category="client">
+                        <div class="ref-card">
+                            <div class="ref-front">
+                                <span class="ref-category client">Client</span>
+                                <h3 class="ref-name">Nate Nichols</h3>
+                                <p class="ref-title">Lumos Fiber</p>
+                                <p class="ref-excerpt">Jace demonstrated strong billing expertise and leadership throughout our transformation initiative at Lumos, where billing was a critical component of our broader IT modernization effort. He played a central role in designing and implementing a subscription-based prepaid billing architecture within GTV that helped us integrate with Salesforce Communications Cloud.</p>
+                                <div class="ref-front-actions">
+                                    <span class="ref-flip-hint"><i class="fas fa-sync-alt"></i> Click to flip</span>
+                                    <button class="ref-expand-btn" onclick="event.stopPropagation(); openModal(this);">Read Full</button>
+                                </div>
+                            </div>
+                            <div class="ref-back">
+                                <span class="ref-back-label">Contact Information</span>
+                                <h3 class="ref-back-name">Nate Nichols</h3>
+                                <div class="ref-contact-row">
+                                    <i class="fas fa-envelope"></i>
+                                    <a href="mailto:Nate.Nichols@lumosfiber.com">Nate.Nichols@lumosfiber.com</a>
+                                </div>
+                                <div class="ref-contact-row">
+                                    <i class="fas fa-phone"></i>
+                                    <span>(336) 491-3140</span>
+                                </div>
+                                <div class="ref-relationship">
+                                    <div class="ref-relationship-label">Relationship</div>
+                                    <div class="ref-relationship-value">Client at Lumos Fiber</div>
+                                </div>
+                                <span class="ref-back-flip-hint"><i class="fas fa-sync-alt"></i> Click to flip back</span>
+                            </div>
+                        </div>
+                        <div class="ref-full-text" style="display:none;">Jace demonstrated strong billing expertise and leadership throughout our transformation initiative at Lumos, where billing was a critical component of our broader IT modernization effort. He played a central role in designing and implementing a subscription-based prepaid billing architecture within GTV that helped us integrate with Salesforce Communications Cloud.<br><br>His depth of knowledge enabled us to successfully deliver capabilities such as varied length promotions, price overrides, automated daily billing, anniversary-based billing cycles, flexible payment options (including prepaid payments without invoices), and seamless invoice reconciliation. Beyond his technical expertise, Jace stood out for his ability to quickly grasp the end-to-end business process and translate those needs into effective GTV configurations and integrations.<br><br>Jace also exhibited strong leadership by maintaining a balance between accuracy and speed. He understood the importance of delivering a high-quality solution while meeting aggressive timelines, and he consistently helped guide the team toward scalable decisions. His big-picture thinking and ability to connect business processes with technical execution were instrumental in delivering a seamless customer experience to our retail fiber customers.<br><br><em>&mdash; Nate Nichols, Lumos Fiber</em></div>
+                    </div>
+
+
+                    <!-- Mark O'Brien - Colleague -->
+                    <div class="ref-card-wrapper" data-category="colleague">
+                        <div class="ref-card">
+                            <div class="ref-front">
+                                <span class="ref-category colleague">Colleague</span>
+                                <h3 class="ref-name">Mark O'Brien</h3>
+                                <p class="ref-title">Senior Manager – Projects, Cognizant</p>
+                                <p class="ref-excerpt">I am writing to provide a professional reference for Jace Sullivan, who served as a Solution Architect and Implementation Consultant on a large-scale telecommunications Revenue Management and Billing platform implementation that I managed. In this role, Jace supported a complex billing environment tailored to telecom use cases and worked across solution design, implementation, testing, and production readiness activities.</p>
+                                <div class="ref-front-actions">
+                                    <span class="ref-flip-hint"><i class="fas fa-sync-alt"></i> Click to flip</span>
+                                    <button class="ref-expand-btn" onclick="event.stopPropagation(); openModal(this);">Read Full</button>
+                                </div>
+                            </div>
+                            <div class="ref-back">
+                                <span class="ref-back-label">Contact Information</span>
+                                <h3 class="ref-back-name">Mark O'Brien</h3>
+                                <div class="ref-contact-row">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>Available upon request</span>
+                                </div>
+                                <div class="ref-contact-row">
+                                    <i class="fas fa-phone"></i>
+                                    <span>Available upon request</span>
+                                </div>
+                                <div class="ref-relationship">
+                                    <div class="ref-relationship-label">Relationship</div>
+                                    <div class="ref-relationship-value">Colleague — Senior Manager at Cognizant</div>
+                                </div>
+                                <span class="ref-back-flip-hint"><i class="fas fa-sync-alt"></i> Click to flip back</span>
+                            </div>
+                        </div>
+                        <div class="ref-full-text" style="display:none;">I am writing to provide a professional reference for Jace Sullivan, who served as a Solution Architect and Implementation Consultant on a large-scale telecommunications Revenue Management and Billing platform implementation that I managed. In this role, Jace supported a complex billing environment tailored to telecom use cases and worked across solution design, implementation, testing, and production readiness activities. His work encompassed data analytics and processing, financial and payment systems, revenue management and ERP integrations, and automated invoicing and recurring billing processes commonly required in telecommunications platforms.<br><br>Throughout the implementation, Jace contributed in a solution architecture and implementation delivery capacity. His responsibilities included supporting requirements analysis, validating solution design decisions, executing assigned implementation and release tasks, participating in UAT and production readiness activities, performing technical issue triage, and coordinating with project managers, technical team members, and stakeholders supporting the billing platform.<br><br>Jace was involved in implementation cutovers and production release activities, including running system and billing reports, validating revenue and financial data outputs, comparing results across integrated systems, and coordinating follow-up actions identified during testing or post-release review. Assigned billing platform tasks supporting scheduled releases were completed as planned and aligned with project timelines.<br><br>In his implementation consultant role, Jace routinely provided initial technical review and triage for questions related to billing functionality, integrations, and system behavior. This work included assessing errors or anomalies, validating assumptions, reproducing scenarios as needed, and determining when escalation or ticket creation was required. He consistently demonstrated sound technical judgment in these situations.<br><br>Jace also supported implementation coordination and documentation activities, including updating work items, creating tickets with full technical context when requested, and validating that solution and design documentation accurately reflected implemented and tested functionality. These efforts supported traceability and continuity throughout the design, build, testing, and stabilization phases of the implementation.<br><br>Throughout our work together, Jace consistently met and exceeded expectations for the project. He demonstrated strong consulting skills, including the ability to communicate effectively with both technical and non-technical stakeholders, translate complex requirements into practical solutions, and operate with a high degree of professionalism, accountability, and adaptability in a fast-paced delivery environment. Based on my experience working with him, Jace would be a strong addition to any organization.<br><br><em>&mdash; Mark O'Brien, Senior Manager &ndash; Projects, Cognizant</em></div>
+                    </div>
+
+
+                    <!-- Ross Poppel - Partner -->
+                    <div class="ref-card-wrapper" data-category="partner">
+                        <div class="ref-card">
+                            <div class="ref-front">
+                                <span class="ref-category partner">Partner</span>
+                                <h3 class="ref-name">Ross Poppel</h3>
+                                <p class="ref-title">Vice President, Customer Solutions — GoTransverse</p>
+                                <p class="ref-excerpt">I have had the pleasure of working with Jace Sullivan for the last 4 years. My company utilized his company, and specifically Jace, as a consultant for the implementation of our software. As our representative, Jace has been the face of our company and his skills have been a tremendous benefit to the project and our organization.</p>
+                                <div class="ref-front-actions">
+                                    <span class="ref-flip-hint"><i class="fas fa-sync-alt"></i> Click to flip</span>
+                                    <button class="ref-expand-btn" onclick="event.stopPropagation(); openModal(this);">Read Full</button>
+                                </div>
+                            </div>
+                            <div class="ref-back">
+                                <span class="ref-back-label">Contact Information</span>
+                                <h3 class="ref-back-name">Ross Poppel</h3>
+                                <div class="ref-contact-row">
+                                    <i class="fas fa-envelope"></i>
+                                    <a href="mailto:rpoppel@gotransverse.com">rpoppel@gotransverse.com</a>
+                                </div>
+                                <div class="ref-contact-row">
+                                    <i class="fas fa-phone"></i>
+                                    <span>(512) 279-3119</span>
+                                </div>
+                                <div class="ref-relationship">
+                                    <div class="ref-relationship-label">Relationship</div>
+                                    <div class="ref-relationship-value">Partner — VP Customer Solutions at GoTransverse, 4 years</div>
+                                </div>
+                                <span class="ref-back-flip-hint"><i class="fas fa-sync-alt"></i> Click to flip back</span>
+                            </div>
+                        </div>
+                        <div class="ref-full-text" style="display:none;">I have had the pleasure of working with Jace Sullivan for the last 4 years. My company utilized his company, and specifically Jace, as a consultant for the implementation of our software. As our representative, Jace has been the face of our company and his skills have been a tremendous benefit to the project and our organization.<br><br>Jace is an exceptionally skilled architect and consultant as he can understand the customer&#39;s needs, work with both their technical and business teams, and provides support at all levels of the organization. His documentation skills are exceptional, allowing my team to easily support the customer post-implementation. Jace can translate the business needs to actionable requirements, and further into tangible results. This allows the projects to remain on target and on budget.<br><br>In a recent project, Jace worked with many of GoTransverse&#39;s largest customers to provide his skills to architect a solution allowing a much higher throughput with customers commending Jace&#39;s contributions and contracting for additional hours. Additionally, the customer moved to become very referenceable, allowing further projects and sales.<br><br>I would like to reiterate my strong recommendation for Jace. He has provided top quality leadership, architecture, technical knowledge, and capabilities as an extension to our team.<br><br><em>&mdash; Ross Poppel, Vice President, Customer Solutions, GoTransverse</em></div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Full Screen Modal -->
+    <div class="ref-modal-overlay" id="refModal">
+        <div class="ref-modal">
+            <button class="ref-modal-close" onclick="closeModal();">&times;</button>
+            <span class="ref-modal-category" id="modalCategory"></span>
+            <h2 class="ref-modal-name" id="modalName"></h2>
+            <p class="ref-modal-title" id="modalTitle"></p>
+            <p class="ref-modal-text" id="modalText"></p>
+            <div class="ref-modal-divider"></div>
+            <div class="ref-modal-contact" id="modalContact"></div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Jace Sullivan. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile nav
+        var navToggle = document.getElementById('mobile-menu');
+        var navMenu = document.querySelector('.nav-menu');
+        navToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+        });
+
+        // Card flip
+        document.querySelectorAll('.ref-card').forEach(function(card) {
+            card.addEventListener('click', function(e) {
+                if (e.target.classList.contains('ref-expand-btn')) return;
+                this.classList.toggle('flipped');
+            });
+        });
+
+        // Filter
+        document.querySelectorAll('.filter-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+                this.classList.add('active');
+                var filter = this.getAttribute('data-filter');
+                document.querySelectorAll('.ref-card-wrapper').forEach(function(card) {
+                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        // Modal
+        function openModal(btn) {
+            var wrapper = btn.closest('.ref-card-wrapper');
+            var front = wrapper.querySelector('.ref-front');
+            var back = wrapper.querySelector('.ref-back');
+            var fullText = wrapper.querySelector('.ref-full-text').innerHTML;
+
+            var category = front.querySelector('.ref-category').textContent;
+            var categoryClass = front.querySelector('.ref-category').className.replace('ref-category ', '');
+            var name = front.querySelector('.ref-name').textContent;
+            var title = front.querySelector('.ref-title').textContent;
+
+            var contactHTML = '';
+            back.querySelectorAll('.ref-contact-row').forEach(function(row) {
+                var icon = row.querySelector('i').className;
+                var text = row.querySelector('a') ? row.querySelector('a').outerHTML : row.querySelector('span').textContent;
+                contactHTML += '<div class="ref-modal-contact-item"><i class="' + icon + '"></i><span>' + text + '</span></div>';
+            });
+
+            var relationship = back.querySelector('.ref-relationship-value');
+            if (relationship) {
+                contactHTML += '<div class="ref-modal-contact-item"><i class="fas fa-handshake"></i><span>' + relationship.textContent + '</span></div>';
+            }
+
+            document.getElementById('modalCategory').textContent = category;
+            document.getElementById('modalCategory').className = 'ref-modal-category ' + categoryClass;
+
+            var catEl = document.getElementById('modalCategory');
+            if (categoryClass.includes('colleague')) {
+                catEl.style.background = '#2c3e6b15';
+                catEl.style.color = '#2c3e6b';
+            } else if (categoryClass.includes('partner')) {
+                catEl.style.background = '#7a654815';
+                catEl.style.color = '#7a6548';
+            } else if (categoryClass.includes('client')) {
+                catEl.style.background = '#6b8f7115';
+                catEl.style.color = '#6b8f71';
+            }
+
+            document.getElementById('modalName').textContent = name;
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalText').innerHTML = fullText;
+            document.getElementById('modalContact').innerHTML = contactHTML;
+            document.getElementById('refModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('refModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('refModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
