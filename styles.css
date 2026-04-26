@@ -549,6 +549,7 @@ footer p {
     }
 
     .nav-menu {
+        display: none;
         position: fixed;
         top: 60px;
         left: 0;
@@ -557,16 +558,14 @@ footer p {
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         flex-direction: column;
-        padding: 20px 16px;
+        padding: 20px 24px;
         gap: 16px;
-        transform: translateY(-120%);
-        transition: transform 0.4s ease;
         border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         z-index: 999;
     }
 
     .nav-menu.active {
-        transform: translateY(0);
+        display: flex;
     }
 
     .nav-link {
