@@ -523,28 +523,44 @@ footer p {
 }
 
 @media screen and (max-width: 768px) {
+    .nav-container {
+        padding: 0 16px;
+        height: 60px;
+    }
+
+    .nav-logo a {
+        font-size: 1.1rem;
+        white-space: nowrap;
+    }
+
     .nav-toggle {
         display: flex;
     }
 
     .nav-menu {
         position: fixed;
-        top: 72px;
+        top: 60px;
         left: 0;
         right: 0;
         background: rgba(250, 249, 247, 0.98);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         flex-direction: column;
-        padding: 30px 40px;
-        gap: 20px;
+        padding: 20px 16px;
+        gap: 16px;
         transform: translateY(-120%);
         transition: transform 0.4s ease;
         border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        z-index: 999;
     }
 
     .nav-menu.active {
         transform: translateY(0);
+    }
+
+    .nav-link {
+        font-size: 0.82rem;
+        letter-spacing: 1.2px;
     }
 
     .hero {
